@@ -120,8 +120,6 @@ int main() {
     check_run(p, s, 70);
   }
 
-  assert(false);
-
   std::cerr << "Tests ran successfully!\n";
   return 0;
 }
