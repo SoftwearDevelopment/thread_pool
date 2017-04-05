@@ -9,16 +9,6 @@
 #include <mutex>
 #include <utility>
 
-#ifndef SOFTWEAR_THREAD_POOL_CERR
-#include <iostream>
-#define SOFTWEAR_THREAD_POOL_CERR std::cerr
-#endif
-
-#ifndef SOFTWEAR_THREAD_POOL_CERR_ENDL
-#include <iostream>
-#define SOFTWEAR_THREAD_POOL_CERR_ENDL std::endl
-#endif
-
 namespace softwear {
 
 /// A group of threads used to execute the same function on
@@ -29,18 +19,7 @@ namespace softwear {
 /// to finish and stop the threads.
 ///
 /// Jobs may not throw exceptions; if a worker throws an
-/// exception, it can catch, the exception's what will be
-/// printed and exit(99) will be called.
-/// If the exception can't be caught, terminate will be
-/// called due to noexept.
-/// Exceptions derived from std::exception can be caught.
-///
-///
-/// ```
-/// SOFTWEAR_THREAD_POOL_CERR
-///   << e.what()
-///   << SOFTWEAR_THREAD_POOL_CERR_ENDL;
-/// ```
+/// exception, terminate() will be called.
 ///
 /// Note that while starting and stopping stopping the threads
 /// and running jobs is thread safe in relation to the
@@ -91,14 +70,7 @@ class thread_pool : private std::vector<std::thread> {
       } else if (instruction_no > executed_instructions) {
         // working++; – Not necessary, run() has already done this for us
 
-        try {
-          job();
-        } catch (std::exception &e) {
-          SOFTWEAR_THREAD_POOL_CERR
-            << e.what()
-            << SOFTWEAR_THREAD_POOL_CERR_ENDL;
-          exit(99);
-        }
+        job();
 
         // Make sure we have the on_run_lock again before
         // idle can finish, so there is no way run() can
